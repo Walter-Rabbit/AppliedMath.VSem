@@ -4,42 +4,44 @@ namespace Lab1.Entities;
 
 public class Equation
 {
-    private readonly Dictionary<int, double> _leftCoefficients;
-    private readonly Dictionary<int, double> _rightCoefficients;
-
     /// <summary>
-    /// Уравнение задаётся набором коэффициентов и свободным членом. Считается, что свободный член стоит в правой части.
+    /// Создать уравнение, заданное выражением и свободным членом. Считается, что свободный член стоит в правой части.
     /// </summary>
-    /// <param name="leftCoefficients">Ключ в словаре - это номер x. Все x стоят слева от знака равенства.</param>
+    /// <param name="leftExpression">Выражение, заданное коэффициентами, все x стоят слева от знака равенства.</param>
     /// <param name="freeElement">Свободный член, расположенный справа от знака равно.</param>
-    public Equation(Dictionary<int, double> leftCoefficients, double freeElement)
+    public Equation(Expression leftExpression, double freeElement)
     {
-        _leftCoefficients = leftCoefficients;
+        LeftExpression = leftExpression;
         FreeElement = freeElement;
-        _rightCoefficients = new Dictionary<int, double>();
+        RightExpression = new Expression();
     }
 
+    /// <summary>
+    /// Создать уравнение, заданное неравенством. Знак неравенства заменяется на добавление нового x.
+    /// </summary>
+    /// <param name="inequality">Неравенство, заданное выражением.</param>
+    /// <param name="newXNumber">Номер для нового x.</param>
     public Equation(Inequality inequality, int newXNumber)
     {
-        _leftCoefficients = inequality.Coefficients as Dictionary<int, double> ?? throw new InvalidOperationException();
+        LeftExpression = inequality.Expression;
         FreeElement = inequality.FreeElement;
-        _rightCoefficients = new Dictionary<int, double>();
+        RightExpression = new Expression();
 
         switch (inequality.Term)
         {
             case Term.GreaterEqual:
-                _leftCoefficients.Add(newXNumber, -1);
+                LeftExpression.AddCoefficient(newXNumber, -1);
                 break;
             case Term.LowerEqual:
-                _leftCoefficients.Add(newXNumber, 1);
+                LeftExpression.AddCoefficient(newXNumber, 1);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-    public IReadOnlyDictionary<int, double> LeftCoefficients => _leftCoefficients;
-    public IReadOnlyDictionary<int, double> RightCoefficients => _rightCoefficients;
+    public Expression LeftExpression { get; }
+    public Expression RightExpression { get; }
     public double FreeElement { get; }
 
     /// <summary>
@@ -47,20 +49,24 @@ public class Equation
     /// а справа все остальные x с их коэффициентами и свободный член.
     /// </summary>
     /// <param name="xNumber">Порядковый номер x.</param>
-    /// <exception cref="NotImplementedException"></exception>
     public void ExpressX(int xNumber)
     {
-        if (_rightCoefficients.TryGetValue(xNumber, out var savedCoefficient))
+        if (RightExpression.TryGetCoefficient(xNumber, out var savedCoefficient))
         {
-            _leftCoefficients.Add(xNumber, -savedCoefficient);
-            _rightCoefficients.Remove(xNumber);
+            LeftExpression.AddCoefficient(xNumber, -savedCoefficient);
+            RightExpression.RemoveCoefficient(xNumber);
         }
 
-        foreach (var coefficient in _leftCoefficients
-                     .Where(coefficient => coefficient.Key != xNumber))
+        if (!LeftExpression.TryGetCoefficient(xNumber, out _))
         {
-            _rightCoefficients.Add(coefficient.Key, -coefficient.Value);
-            _leftCoefficients.Remove(coefficient.Key);
+            throw new ArgumentException($"There is no such x with number {xNumber}");
+        }
+
+        for (int i = 0; i < LeftExpression.Coefficients.Count; i++)
+        {
+            if (i == xNumber) continue;
+            RightExpression.AddCoefficient(i, -LeftExpression.Coefficients[i]);
+            LeftExpression.RemoveCoefficient(i);
         }
     }
 }

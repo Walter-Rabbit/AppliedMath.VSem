@@ -4,22 +4,28 @@ using Lab1.Entities.Enums;
 void Write(Equation equation)
 {
     Console.WriteLine("Left:");
-    foreach (var coef in equation.LeftCoefficients)
+    foreach (var coef in equation.LeftExpression.Coefficients)
     {
-        Console.WriteLine(coef);
+        if (coef != 0)
+        {
+            Console.WriteLine(coef);
+        }
     }
 
     Console.WriteLine("Right:");
-    foreach (var coef in equation.RightCoefficients)
+    foreach (var coef in equation.RightExpression.Coefficients)
     {
-        Console.WriteLine(coef);
+        if (coef != 0)
+        {
+            Console.WriteLine(coef);
+        }
     }
 
     Console.WriteLine(equation.FreeElement);
 }
 
-var coefs = new Dictionary<int, double> { { 1, 2 }, { 2, 3 }, { 3, 5 }, { 4, 2 } };
-var ineq = new Inequality(coefs, 2, Term.GreaterEqual);
+var coefs = new List<double> { 2, 3, 5, 2 };
+var ineq = new Inequality(new Expression(coefs), 2, Term.GreaterEqual);
 
 var eq1 = new Equation(ineq, 5);
 Write(eq1);
