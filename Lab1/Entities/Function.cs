@@ -2,12 +2,10 @@
 
 public class Function
 {
-    private Dictionary<int, double> _coefficients;
-
-    public Function(Dictionary<int, double> coefficients)
+    public Function(Expression expression)
     {
-        _coefficients = coefficients;
+        Expression = expression;
     }
 
-    public IReadOnlyDictionary<int, double> Coefficients => _coefficients;
+    public Expression Expression { get; }
 }

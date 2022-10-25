@@ -3,15 +3,19 @@
 public class SimplexTable
 {
     public int FreeVariablesCount { get; }
-    public Dictionary<int, Dictionary<int, double>> Table { get; }
+    public Table Table { get; }
 
+    // TODO: Возможно стоит добавлять столбцы, а строчки. Ну в общем тут думать надо, как лучше реализовать.
     public SimplexTable(Function function, SystemOfEquations systemOfEquations)
     {
-        Table = new Dictionary<int, Dictionary<int, double>>();
-        
-        foreach (var coefficient in function.Coefficients)
+        Table = new Table();
+
+        for (int i = 0; i < function.Expression.Coefficients.Count; i++)
         {
-            Table.Add(coefficient.Key, new Dictionary<int, double>());
+            if (function.Expression.Coefficients[i] != 0)
+            {
+                Table.AddColumn(i, new Expression());
+            }
         }
     }
 }
