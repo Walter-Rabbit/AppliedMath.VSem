@@ -2,23 +2,34 @@
 
 public class Table
 {
-    // TODO: Вероятно тут нужно будет что-то изменить в зависимости от того, как будет симлекс таблица реализовываться.
-    private List<Expression> _grid;
+    private readonly Row[] _table;
 
-    public Table()
+    public Table(Row[] table)
     {
-        _grid = new List<Expression>();
+        _table = table;
     }
 
-    public IReadOnlyList<Expression> Grid => _grid;
-    
-    public void AddColumn(int columnNumber, Expression expression)
+    public Table(int height, int width)
     {
-        if (_grid.Count - 1 < columnNumber)
+        _table = new Row[height];
+        for (int i = 0; i<height; i++)
         {
-            _grid.AddRange(new Expression[columnNumber - _grid.Count + 1]);
+            _table[i] = new Row(new double[width]);
         }
+    }
 
-        _grid[columnNumber] = expression;
+    public int Height => _table.Length;
+    public int Width => _table.Length > 0 ? _table[0].Length : 0;
+
+    public Row this[int i]
+    {
+        get => _table[i];
+        set => _table[i] = value;
+    }
+
+    public double this[int i, int j]
+    {
+        get => _table[i][j];
+        set => _table[i][j] = value;
     }
 }

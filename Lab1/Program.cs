@@ -1,37 +1,16 @@
-﻿using Lab1.Entities;
+﻿using Lab1;
+using Lab1.Entities;
 using Lab1.Entities.Enums;
 
-void Write(Equation equation)
+var eq = new Expression(new List<double>() {-1, -2, -3, 1 });
+
+var s = new SystemOfEquations(new List<Equation>()
 {
-    Console.WriteLine("Left:");
-    foreach (var coef in equation.LeftExpression.Coefficients)
-    {
-        if (coef != 0)
-        {
-            Console.WriteLine(coef);
-        }
-    }
+    new Equation(new Expression(new List<double>() { 1, -3, -1, -2 }), -4),
+    new Equation(new Expression(new List<double>() { 1, -1, 1, 0 }), 0),
+});
 
-    Console.WriteLine("Right:");
-    foreach (var coef in equation.RightExpression.Coefficients)
-    {
-        if (coef != 0)
-        {
-            Console.WriteLine(coef);
-        }
-    }
+var m = new SimplexMethod();
+var r = m.Minimize(eq, s);
 
-    Console.WriteLine(equation.FreeElement);
-}
-
-var coefs = new List<double> { 2, 3, 5, 2 };
-var ineq = new Inequality(new Expression(coefs), 2, Term.GreaterEqual);
-
-var eq1 = new Equation(ineq, 5);
-Write(eq1);
-
-eq1.ExpressX(3);
-Write(eq1);
-
-eq1.ExpressX(2);
-Write(eq1);
+Console.WriteLine(r);
