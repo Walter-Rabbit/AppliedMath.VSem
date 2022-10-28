@@ -2,20 +2,106 @@
 
 public class SimplexTable
 {
-    public int FreeVariablesCount { get; }
-    public Table Table { get; }
+    private double[] _functionCoefficients;
+    private readonly int[] _basis;
+    private readonly double[] _freeCoefficients;
+    private readonly Table _table;
+    private readonly double[] _deltas;
 
-    // TODO: Возможно стоит добавлять столбцы, а строчки. Ну в общем тут думать надо, как лучше реализовать.
-    public SimplexTable(Function function, SystemOfEquations systemOfEquations)
+
+    // TODO: fix?
+    public IReadOnlyCollection<double> Deltas => _deltas;
+
+    public double FreeDelta { get; private set; }
+
+    public IReadOnlyCollection<int> Basis => _basis;
+
+    public IReadOnlyCollection<double> FreeCoefficients => _freeCoefficients;
+
+    public SimplexTable(Table table, double[] freeCoefficients, double[] functionCoefficients, int[]? basis = null)
     {
-        Table = new Table();
-
-        for (int i = 0; i < function.Expression.Coefficients.Count; i++)
+        _table = table;
+        _freeCoefficients = freeCoefficients;
+        _functionCoefficients = functionCoefficients;
+        if (basis is null)
         {
-            if (function.Expression.Coefficients[i] != 0)
+            _basis = new int[table.Height];
+            _basis.AsSpan().Fill(-1);
+        }
+        else
+        {
+            _basis = basis;
+        }
+        _deltas = new double[table.Width];
+        _deltas.AsSpan().Fill(-1);
+        EnsureBasisDefined();
+        CalculateDeltas();
+    }
+
+    private void EnsureBasisDefined()
+    {
+        int nextBasisIndex = 0;
+        for (int i = 0; i < _basis.Length; i++)
+        {
+            if (_basis[i] != -1)
+                continue;
+
+            while (_table[i, nextBasisIndex] == 0)
+                nextBasisIndex++;
+
+            var basisIndex = nextBasisIndex++;
+            SwapBasis(i, basisIndex);
+        }
+    }
+
+    public void CalculateDeltas()
+    {
+        for (int i = 0; i < _deltas.Length; i++)
+        {
+            _deltas[i] = -_functionCoefficients[i];
+            for (int j = 0; j < _table.Height; j++)
             {
-                Table.AddColumn(i, new Expression());
+                _deltas[i] += _table[j, i] * _functionCoefficients[_basis[j]];
             }
+        }
+
+        FreeDelta = 0;
+        for (int i = 0; i < _table.Height; i++)
+        {
+            FreeDelta += _functionCoefficients[_basis[i]] * _freeCoefficients[i];
+        }
+    }
+
+    public int GetResolvingColumn()
+    {
+        return Array.IndexOf(_deltas, _deltas.Max());
+    }
+
+    public int GetResolvingRow(int column)
+    {
+        var Q = new double[_table.Height];
+        for (int i = 0; i < _table.Height; i++)
+        {
+            Q[i] = _freeCoefficients[i] / _table[i, column];
+        }
+
+        return Array.IndexOf(Q, Q.Min());
+    }
+
+    public void SwapBasis(int basisIndex, int newBasis)
+    {
+        _basis[basisIndex] = newBasis;
+        var delimeter = _table[basisIndex, newBasis];
+        _table[basisIndex] /= delimeter;
+        _freeCoefficients[basisIndex] /= delimeter;
+        for (int row = 0; row < _table.Height; row++)
+        {
+            if (row == basisIndex)
+                continue;
+
+            var multiplier = _table[row, newBasis];
+            _table[row] -= _table[basisIndex] * multiplier;
+            _freeCoefficients[row] -= _freeCoefficients[basisIndex] * multiplier;
         }
     }
 }

@@ -66,4 +66,16 @@ public class Expression
         coefficient = _coefficients[xNumber];
         return true;
     }
+
+    public static Expression operator *(Expression expression, double number)
+    {
+        var newCoefficients = expression._coefficients.Select(x => x * number).ToList();
+        return new Expression(newCoefficients);
+    }
+
+    public static Expression operator /(Expression expression, double number)
+    {
+        var newCoefficients = expression._coefficients.Select(x => x / number).ToList();
+        return new Expression(newCoefficients);
+    }
 }
