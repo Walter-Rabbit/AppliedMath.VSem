@@ -26,6 +26,16 @@ public class Expression
         _coefficients[xNumber] = coefficient;
     }
 
+    public void Resize(int newSize)
+    {
+        if (newSize - _coefficients.Count < 0)
+        {
+            throw new ArgumentException("You can only add coefficients.");
+        }
+
+        _coefficients.AddRange(new double[newSize - _coefficients.Count]);
+    }
+
     public void RemoveCoefficient(int xNumber)
     {
         if (_coefficients.Count - 1 >= xNumber)

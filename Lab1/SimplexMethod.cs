@@ -4,18 +4,19 @@ namespace Lab1;
 
 public class SimplexMethod
 {
-    public SimplexMethodResult Maximize(Expression function, SystemOfLimitations systemOfLimitations,
-        int[]? basis = null)
+    public SimplexMethodResult Maximize(Expression function, SystemOfLimitations systemOfLimitations)
     {
         function *= -1;
-        var maximizationResult = Maximize(function, systemOfLimitations, basis);
+        var maximizationResult = Minimize(function, systemOfLimitations);
 
         return new SimplexMethodResult(maximizationResult.X, -maximizationResult.FunctionValue);
     }
 
-    public SimplexMethodResult Minimize(Expression function, SystemOfLimitations systemOfLimitations,
-        int[]? basis = null)
+    public SimplexMethodResult Minimize(Expression function, SystemOfLimitations systemOfLimitations)
     {
+        var basis = systemOfLimitations.Canonize();
+        function.Resize(systemOfLimitations.Equations![0].Expression.Coefficients.Count);
+
         var table = BuildSimplexTable(function, systemOfLimitations, basis);
 
         while (table.Deltas.Any(x => x > 0.001))
@@ -38,7 +39,9 @@ public class SimplexMethod
         return new SimplexMethodResult(x, table.FreeDelta);
     }
 
-    public SimplexTable BuildSimplexTable(Expression function, SystemOfLimitations systemOfLimitations,
+    public SimplexTable BuildSimplexTable(
+        Expression function,
+        SystemOfLimitations systemOfLimitations,
         int[]? basis = null)
     {
         var table = new Table(systemOfLimitations.Equations.Count,

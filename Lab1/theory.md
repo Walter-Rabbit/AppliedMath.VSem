@@ -8,10 +8,10 @@
 
 > Пример:
 >
->![table](..\Sources\table.png)
+>![table](.\Sources\table.png)
 >
 > При системе:
-> 
+>
 > $$\begin{cases}x_3 = -2 - (x_1 - 2x_2) \\
 > x_4 = -4 - (-x_1 - x_2) \\
 > x_5 = 2 - (x_1 - x_2) \\
