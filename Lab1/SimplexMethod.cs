@@ -33,7 +33,7 @@ public class SimplexMethod
     {
         var table = BuildSimplexTable(function, systemOfEquations, basis);
 
-        while (table.Deltas.Any(x => x > 0))
+        while (table.Deltas.Any(x => x > 0.001))
         {
             var resolvingColumn = table.GetResolvingColumn();
             var resolvingRow = table.GetResolvingRow(resolvingColumn);

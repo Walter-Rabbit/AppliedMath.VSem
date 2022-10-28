@@ -35,22 +35,34 @@ public class SimplexTable
         _deltas = new double[table.Width];
         _deltas.AsSpan().Fill(-1);
         EnsureBasisDefined();
+        EnsureFreeCoefficientsPositive();
         CalculateDeltas();
     }
 
     private void EnsureBasisDefined()
     {
-        int nextBasisIndex = 0;
         for (int i = 0; i < _basis.Length; i++)
         {
+            int nextBasisIndex = 0;
             if (_basis[i] != -1)
                 continue;
 
-            while (_table[i, nextBasisIndex] == 0)
+            while (_table[i, nextBasisIndex] == 0 || _basis.Contains(nextBasisIndex))
                 nextBasisIndex++;
 
             var basisIndex = nextBasisIndex++;
             SwapBasis(i, basisIndex);
+        }
+    }
+
+    private void EnsureFreeCoefficientsPositive()
+    {
+        while (_freeCoefficients.Any(x => x < 0))
+        {
+            var oldBasisIndex = Array.IndexOf(_freeCoefficients, _freeCoefficients.Min());
+            var newBasis = _table[oldBasisIndex].IndexOf(coefs => coefs.Min());
+            
+            SwapBasis(oldBasisIndex, newBasis);
         }
     }
 
@@ -82,7 +94,7 @@ public class SimplexTable
         var Q = new double[_table.Height];
         for (int i = 0; i < _table.Height; i++)
         {
-            Q[i] = _freeCoefficients[i] / _table[i, column];
+            Q[i] = _table[i, column] < 0 ? double.MaxValue : _freeCoefficients[i] / _table[i, column];
         }
 
         return Array.IndexOf(Q, Q.Min());
