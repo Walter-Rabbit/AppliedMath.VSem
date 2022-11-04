@@ -27,7 +27,7 @@ $$
         A \cdot \overline x = \overline b \\
         \overline x \ge \overline 0
     \end{cases}
-    \quad \rArr \qquad
+    \quad \rightarrow \qquad
     \begin{cases}
         \overline b^T \cdot \overline y \rightarrow max (min) \\
         A^T \cdot \overline y = \overline c \\
