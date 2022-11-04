@@ -102,23 +102,6 @@ public class Tests
     }
 
     [Test]
-    public void Test0_Maximize_AnswerIsCorrect()
-    {
-        var eq = new Expression(new List<double> { -1, 3 });
-
-        var s = new SystemOfLimitations(new List<ILimitation>
-        {
-            new Inequality(new Expression(new List<double> { 1, 2 }), 4, Term.LowerEqual),
-            new Inequality(new Expression(new List<double> { 1, -1 }), 1, Term.GreaterEqual),
-            new Inequality(new Expression(new List<double> { 1, 1 }), 8, Term.LowerEqual),
-        });
-
-        var result = _simplexMethod.Maximize(eq, s);
-        Assert.AreEqual(1, result.FunctionValue, 0.00001);
-    }
-
-    
-    [Test]
     public void Test6_Maximize_AnswerIsCorrect()
     {
         var eq = new Expression(new List<double> { -1, 5, 3, -1 });
@@ -147,5 +130,21 @@ public class Tests
 
         var result = _simplexMethod.Minimize(eq, s);
         Assert.AreEqual(10, result.FunctionValue, 0.00001);
+    }
+    
+    [Test]
+    public void TestExtra_Maximize_AnswerIsCorrect()
+    {
+        var eq = new Expression(new List<double> { -1, 3 });
+
+        var s = new SystemOfLimitations(new List<ILimitation>
+        {
+            new Inequality(new Expression(new List<double> { 1, 2 }), 4, Term.LowerEqual),
+            new Inequality(new Expression(new List<double> { 1, -1 }), 1, Term.GreaterEqual),
+            new Inequality(new Expression(new List<double> { 1, 1 }), 8, Term.LowerEqual),
+        });
+
+        var result = _simplexMethod.Maximize(eq, s);
+        Assert.AreEqual(1, result.FunctionValue, 0.00001);
     }
 }
