@@ -15,17 +15,13 @@ public class Equation : ILimitation
         Expression = inequality.Expression;
         FreeElement = inequality.FreeElement;
 
-        switch (inequality.Term)
+        if (inequality.Term is Term.GreaterEqual)
         {
-            case Term.GreaterEqual:
-                Expression.AddCoefficient(newXNumber, -1);
-                break;
-            case Term.LowerEqual:
-                Expression.AddCoefficient(newXNumber, 1);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+            Expression *= -1;
+            FreeElement *= -1;
         }
+        
+        Expression.AddCoefficient(newXNumber, 1);
     }
 
     public Expression Expression { get; }
