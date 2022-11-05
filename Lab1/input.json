@@ -1,0 +1,34 @@
+{
+  "Equations": [],
+  "Inequalities": [
+    {
+      "Coefficients": [
+        1.0,
+        3.0,
+        3.0,
+        1.0
+      ],
+      "FreeElement": 3.0,
+      "Term": "LowerEqual"
+    },
+    {
+      "Coefficients": [
+        2.0,
+        0.0,
+        3.0,
+        -1.0
+      ],
+      "FreeElement": 4.0,
+      "Term": "LowerEqual"
+    }
+  ],
+  "Function": {
+    "Coefficients": [
+      -1.0,
+      5.0,
+      3.0,
+      -1.0
+    ]
+  },
+  "Mode": "Maximize"
+}
