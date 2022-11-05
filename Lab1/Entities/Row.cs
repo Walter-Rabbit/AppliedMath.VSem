@@ -17,6 +17,11 @@ public class Row
         set => _values[index] = value;
     }
 
+    public int IndexOf(Func<double[], double> f)
+    {
+        return Array.IndexOf(_values, f.Invoke(_values));
+    }
+    
     public static Row operator *(Row row, double value)
     {
         double[] result = new double[row._values.Length];

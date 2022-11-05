@@ -1,39 +1,25 @@
-﻿using System.Drawing;
-using Lab1.Entities;
+﻿using Lab1.Entities;
 
 namespace Lab1;
 
 public class SimplexMethod
 {
-    /// <summary>
-    /// Максимизирует функцию с ограничениями, заданными системой уравнений.
-    /// </summary>
-    /// <param name="function">Целевая функция для максимизации.</param>
-    /// <param name="systemOfEquations">Системак ограничений.</param>
-    /// <param name="basis">Базис</param>
-    /// <returns>Значения x, при которых функция максимальна.</returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public SimplexMethodResult Maximize(Expression function, SystemOfEquations systemOfEquations, int[]? basis = null)
+    public SimplexMethodResult Maximize(Expression function, SystemOfLimitations systemOfLimitations)
     {
         function *= -1;
-        var maximizationResult = Maximize(function, systemOfEquations, basis);
+        var maximizationResult = Minimize(function, systemOfLimitations);
 
         return new SimplexMethodResult(maximizationResult.X, -maximizationResult.FunctionValue);
     }
 
-    /// <summary>
-    /// Минимизирует функцию с ограничениями, заданными системой уравнений.
-    /// </summary>
-    /// <param name="function">Целевая функция для минимизации.</param>
-    /// <param name="systemOfEquations">Система ограничений.</param>
-    /// <param name="basis"></param>
-    /// <returns>Значения x, при которых функция минимальна.</returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public SimplexMethodResult Minimize(Expression function, SystemOfEquations systemOfEquations, int[]? basis = null)
+    public SimplexMethodResult Minimize(Expression function, SystemOfLimitations systemOfLimitations)
     {
-        var table = BuildSimplexTable(function, systemOfEquations, basis);
+        var basis = systemOfLimitations.Canonize();
+        function.Resize(systemOfLimitations.Equations![0].Expression.Coefficients.Count);
 
-        while (table.Deltas.Any(x => x > 0))
+        var table = BuildSimplexTable(function, systemOfLimitations, basis);
+
+        while (table.Deltas.Any(x => x > 0.001))
         {
             var resolvingColumn = table.GetResolvingColumn();
             var resolvingRow = table.GetResolvingRow(resolvingColumn);
@@ -53,17 +39,22 @@ public class SimplexMethod
         return new SimplexMethodResult(x, table.FreeDelta);
     }
 
-    public SimplexTable BuildSimplexTable(Expression function, SystemOfEquations systemOfEquations, int[]? basis = null)
+    public SimplexTable BuildSimplexTable(
+        Expression function,
+        SystemOfLimitations systemOfLimitations,
+        int[]? basis = null)
     {
-        var table = new Table(systemOfEquations.Equations.Count, systemOfEquations.Equations[0].LeftExpression.Coefficients.Count);
+        var table = new Table(systemOfLimitations.Equations.Count,
+            systemOfLimitations.Equations[0].Expression.Coefficients.Count);
 
-        for (int i = 0; i < systemOfEquations.Equations.Count; i++)
+        for (int i = 0; i < systemOfLimitations.Equations.Count; i++)
         {
-            var equation = systemOfEquations.Equations[i];
-            table[i] = new Row(equation.LeftExpression.Coefficients.ToArray());
+            var equation = systemOfLimitations.Equations[i];
+            table[i] = new Row(equation.Expression.Coefficients.ToArray());
         }
 
-        var stable = new SimplexTable(table, systemOfEquations.Equations.Select(x => x.FreeElement).ToArray(), function.Coefficients.ToArray() ,basis);
+        var stable = new SimplexTable(table, systemOfLimitations.Equations.Select(x => x.FreeElement).ToArray(),
+            function.Coefficients.ToArray(), basis);
 
         return stable;
     }

@@ -1,16 +1,23 @@
 ﻿using Lab1;
-using Lab1.Entities;
-using Lab1.Entities.Enums;
+using Lab1.JsonModels;
+using Newtonsoft.Json;
 
-var eq = new Expression(new List<double>() {-1, -2, -3, 1 });
+var input = File.ReadAllText("input.json");
+var inputDeserialized =
+    JsonConvert.DeserializeObject<SimplexTaskModel>(input, new Newtonsoft.Json.Converters.StringEnumConverter());
 
-var s = new SystemOfEquations(new List<Equation>()
+if (inputDeserialized is null)
 {
-    new Equation(new Expression(new List<double>() { 1, -3, -1, -2 }), -4),
-    new Equation(new Expression(new List<double>() { 1, -1, 1, 0 }), 0),
-});
+    throw new ArgumentException("Input format is incorrect.");
+}
 
-var m = new SimplexMethod();
-var r = m.Minimize(eq, s);
+var (system, function) = inputDeserialized.GetEntity();
 
-Console.WriteLine(r);
+var method = new SimplexMethod();
+
+var result = inputDeserialized.Mode is Mode.Minimize
+    ? method.Minimize(function, system)
+    : method.Maximize(function, system);
+
+var output = JsonConvert.SerializeObject(result);
+File.WriteAllText("output.json", output);
