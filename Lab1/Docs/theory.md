@@ -8,7 +8,7 @@
 
 > Пример:
 >
->![table](.\Sources\table.png)
+>![table](.\Images\table.png)
 >
 > При системе:
 >
