@@ -108,8 +108,10 @@ $$
 Перейдём к задаче линейного программирования:
 
 $$
-x_1 + x_2 \rightarrow max \\
+x_1 + x_2 \rightarrow max
+$$
 
+$$
 \begin{cases}
 4x_1 + 2x_2 \ge 1 \\
 2x_1 + 3x_2 \ge 1 \\
