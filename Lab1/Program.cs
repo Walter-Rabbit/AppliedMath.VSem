@@ -2,7 +2,7 @@
 using Lab1.JsonModels;
 using Newtonsoft.Json;
 
-var input = File.ReadAllText("input.json");
+var input = File.ReadAllText("../../../input.json");
 var inputDeserialized =
     JsonConvert.DeserializeObject<SimplexTaskModel>(input, new Newtonsoft.Json.Converters.StringEnumConverter());
 
@@ -20,4 +20,4 @@ var result = inputDeserialized.Mode is Mode.Minimize
     : method.Maximize(function, system);
 
 var output = JsonConvert.SerializeObject(result);
-File.WriteAllText("output.json", output);
+File.WriteAllText("../../../output.json", output);

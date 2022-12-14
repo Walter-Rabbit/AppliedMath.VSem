@@ -1,34 +1,53 @@
 {
-  "Equations": [],
+  "Equations": [
+    {
+      "Coefficients": [
+        10.0,
+        0.0,
+        13.0,
+        0.0
+      ],
+      "FreeElement": 230.0
+    },
+    {
+      "Coefficients": [
+        0.0,
+        12.0,
+        0.0,
+        13.0
+      ],
+      "FreeElement": 68.0
+    }
+  ],
   "Inequalities": [
     {
       "Coefficients": [
         1.0,
-        3.0,
-        3.0,
-        1.0
+        1.0,
+        0.0,
+        0.0
       ],
-      "FreeElement": 3.0,
+      "FreeElement": 24.0,
       "Term": "LowerEqual"
     },
     {
       "Coefficients": [
-        2.0,
         0.0,
-        3.0,
-        -1.0
+        0.0,
+        1.0,
+        1.0
       ],
-      "FreeElement": 4.0,
+      "FreeElement": 24.0,
       "Term": "LowerEqual"
     }
   ],
   "Function": {
     "Coefficients": [
-      -1.0,
-      5.0,
-      3.0,
-      -1.0
+      80.0,
+      84.0,
+      156.0,
+      169.0
     ]
   },
-  "Mode": "Maximize"
+  "Mode": "Minimize"
 }
