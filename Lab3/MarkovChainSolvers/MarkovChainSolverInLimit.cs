@@ -4,16 +4,26 @@ namespace Lab3.MarkovChainSolvers;
 
 public class MarkovChainSolverInLimit
 {
-    public Vector<double> Solve(Vector<double> startCondition, Matrix<double> transition, double eps)
+    public (Vector<double>, List<double>) Solve(Vector<double> startCondition, Matrix<double> transition, double eps,
+        int maxIteration)
     {
         var previousCondition = Vector<double>.Build.Random(startCondition.Count);
-        while (Error(startCondition, previousCondition) > eps)
+        var errors = new List<double>();
+
+        for (var i = 0; i < maxIteration; i++)
         {
+            var error = Error(startCondition, previousCondition);
+            errors.Add(error);
+            if (error < eps)
+            {
+                break;
+            }
+
             previousCondition = startCondition;
             startCondition = IterationSolve(previousCondition, transition);
         }
 
-        return startCondition;
+        return (startCondition, errors);
     }
 
     private Vector<double> IterationSolve(Vector<double> condition, Matrix<double> transition)
