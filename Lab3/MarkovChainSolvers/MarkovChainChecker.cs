@@ -2,7 +2,7 @@
 
 namespace Lab3.MarkovChainSolvers;
 
-public class MarkovChainChecker
+public static class MarkovChainChecker
 {
     public static void ThrowIfIncorrect(Matrix<double> matrix, double eps = 0.001)
     {

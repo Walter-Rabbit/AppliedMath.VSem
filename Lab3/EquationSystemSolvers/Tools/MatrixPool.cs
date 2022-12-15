@@ -5,7 +5,7 @@ namespace Lab3.EquationSystemSolvers.Tools;
 public static class MatrixPool<T> where T : struct, IEquatable<T>, IFormattable
 {
     private static readonly Dictionary<(int, int), List<Matrix<T>>>
-        Pool = new Dictionary<(int, int), List<Matrix<T>>>();
+        Pool = new();
 
     public static Matrix<T> Get(int row, int column)
     {

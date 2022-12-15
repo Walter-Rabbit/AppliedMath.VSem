@@ -5,9 +5,8 @@ namespace Lab3.EquationSystemSolvers.Tools;
 public static class VectorPool<T> where T : struct, IEquatable<T>, IFormattable
 {
     private static readonly Dictionary<int, List<Vector<T>>>
-        Pool = new Dictionary<int, List<Vector<T>>>();
+        Pool = new();
 
-    /// <param name="init">Функция считающая значение для i-того элемента</param>
     public static Vector<T> Get(int length, Func<int, T>? init = null)
     {
         if (!Pool.TryGetValue(length, out List<Vector<T>>? list))
@@ -23,7 +22,7 @@ public static class VectorPool<T> where T : struct, IEquatable<T>, IFormattable
                 : Vector<T>.Build.Dense(length, init);
         }
 
-        Vector<T> vector = list[0];
+        var vector = list[0];
 
         if (init is not null)
         {

@@ -31,7 +31,7 @@ public class GaussianEquationSystemSolver
             }
         }
 
-        Vector<double> solution = VectorPool<double>.Get(n);
+        var solution = VectorPool<double>.Get(n);
 
         for (var i = 0; i < n; i++)
         {
