@@ -6,26 +6,28 @@ namespace Lab3.MarkovChainSolvers;
 
 public class MarkovChainSolverAnalytical
 {
-    private GaussianEquationSystemSolver _equationSystemSolver;
+    private readonly GaussianEquationSystemSolver _equationSystemSolver;
 
     public MarkovChainSolverAnalytical()
     {
         _equationSystemSolver = new GaussianEquationSystemSolver();
     }
 
-    public Vector<double> Solve(Matrix<double> transition)
+    public Vector<double> Solve(Matrix<double> transitions)
     {
-        var vector = Vector<double>.Build.Dense(transition.RowCount, 0.0);
+        MarkovChainChecker.ThrowIfIncorrect(transitions);
+
+        var vector = Vector<double>.Build.Dense(transitions.RowCount, 0.0);
         vector[0] = 1.0;
 
-        transition = transition.Transpose();
-        for (var i = 0; i < transition.RowCount; i++)
+        transitions = transitions.Transpose();
+        for (var i = 0; i < transitions.RowCount; i++)
         {
-            transition[i, i] -= 1.0;
-            transition[0, i] += 1.0;
+            transitions[i, i] -= 1.0;
+            transitions[0, i] += 1.0;
         }
 
-        var request = new EquationSystemSolverRequest(transition, vector);
+        var request = new EquationSystemSolverRequest(transitions, vector);
         var response = _equationSystemSolver.Solve(request);
 
         return response.Solution;

@@ -4,9 +4,19 @@ namespace Lab3.MarkovChainSolvers;
 
 public class MarkovChainSolverInLimit
 {
-    public (Vector<double>, List<double>) Solve(Vector<double> startCondition, Matrix<double> transition, double eps,
-        int maxIteration)
+    public (Vector<double>, List<double>) Solve(
+        Matrix<double> transitions,
+        int startPositionIndex = -1,
+        double eps = 0.001,
+        int maxIteration = 100)
     {
+        MarkovChainChecker.ThrowIfIncorrect(transitions, eps);
+
+        startPositionIndex = startPositionIndex != -1
+            ? startPositionIndex
+            : Random.Shared.Next(0, transitions.ColumnCount - 1);
+        var startCondition = transitions.Row(startPositionIndex);
+
         var previousCondition = Vector<double>.Build.Random(startCondition.Count);
         var errors = new List<double>();
 
@@ -20,7 +30,7 @@ public class MarkovChainSolverInLimit
             }
 
             previousCondition = startCondition;
-            startCondition = IterationSolve(previousCondition, transition);
+            startCondition = IterationSolve(previousCondition, transitions);
         }
 
         return (startCondition, errors);
