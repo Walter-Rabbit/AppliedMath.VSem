@@ -1,4 +1,5 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using Lab3.EquationSystemSolvers.Tools;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Lab3.MarkovChainSolvers;
 
@@ -6,16 +7,12 @@ public class MarkovChainSolverInLimit
 {
     public (Vector<double>, List<double>) Solve(
         Matrix<double> transitions,
-        int startPositionIndex = -1,
+        Vector<double> startCondition,
         double eps = 0.001,
         int maxIteration = 100)
     {
         MarkovChainChecker.ThrowIfIncorrect(transitions, eps);
-
-        startPositionIndex = startPositionIndex != -1
-            ? startPositionIndex
-            : Random.Shared.Next(0, transitions.ColumnCount - 1);
-        var startCondition = transitions.Row(startPositionIndex);
+        if (startCondition.Count != transitions.ColumnCount || startCondition.Sum() != 1) throw new ArgumentException("Incorrect start condition");
 
         var previousCondition = Vector<double>.Build.Random(startCondition.Count);
         var errors = new List<double>();

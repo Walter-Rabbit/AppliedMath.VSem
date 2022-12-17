@@ -26,14 +26,16 @@ var matrix = Matrix<double>.Build.DenseOfArray(new[,]
     { 0.67, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.33 }
 });
 
-var (solution1, errors1) = new MarkovChainSolverInLimit().Solve(matrix, 1);
-var (solution2, errors2) = new MarkovChainSolverInLimit().Solve(matrix, 6);
+var startCondition1 = Vector<double>.Build.DenseOfArray(new[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 });
+var (solution1, errors1) = new MarkovChainSolverInLimit().Solve(matrix, startCondition1);
+var startCondition2 = Vector<double>.Build.DenseOfArray(new[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 });
+var (solution2, errors2) = new MarkovChainSolverInLimit().Solve(matrix, startCondition2);
 
 var plt = new Plot(1200, 800);
 var ones1 = Enumerable.Range(0, errors1.Count).Select(x => (double)x).ToArray();
 var ones2 = Enumerable.Range(0, errors2.Count).Select(x => (double)x).ToArray();
 plt.AddScatter(ones1, errors1.ToArray(), Color.Blue, lineWidth: 3f, label: "1");
-plt.AddScatter(ones2, errors2.ToArray(), Color.Red, lineWidth: 3f, lineStyle: LineStyle.Dash, label: "3");
+plt.AddScatter(ones2, errors2.ToArray(), Color.Red, lineWidth: 3f, lineStyle: LineStyle.Dash, label: "6");
 plt.Legend(location: Alignment.UpperRight);
 plt.XLabel("Iteration");
 plt.YLabel("Error");
@@ -59,7 +61,7 @@ var groupNames = Enumerable.Range(0, matrix.RowCount).Select(i => i.ToString()).
 var seriesNames = new[] { "Start 1", "Start 6", "Analytical" };
 var valuesBySeries = new[] { solution1.ToArray(), solution2.ToArray(), solution.ToArray() };
 plt.AddBarGroups(groupNames, seriesNames, valuesBySeries, null);
-plt.XLabel("Condition");
+plt.XLabel("State");
 plt.YLabel("Probability");
 
 plt.SaveFig("..\\..\\..\\solution.png");
